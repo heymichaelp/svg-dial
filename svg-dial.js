@@ -37,30 +37,46 @@
     }
   };
 
-  exports.DialKnob = function(elSelector, options) {
-    this.elSelector = elSelector || '#svg-dial';
-    this.options = this.defaults(options || {});
+  var defaults = function(base, defaults) {
+    var result = {};
+
+    for (key in defaults) {
+      result[key] = defaults[key];
+    }
+    for (key in base) {
+      result[key] = base[key];
+    }
+
+    return result;
+  };
+
+  exports.DialKnob = function(el, options) {
+    this.el = el || '#svg-dial';
+    this.options = defaults(options || {}, {
+      frameBackgroundColor: 'white',
+      frameSize: 200,
+      ringBackground: '#888',
+      innerBackground: 'white',
+      textFontFamily: 'impact',
+      textFontSize: '24px',
+      textFontStyle: 'none',
+      textFontWeight: 'none',
+      ringWidth: 50
+    });
+
     this.initialize();
   };
 
+  exports.DialKnob.create = function(el, options) {
+    return new exports.DialKnob(el, options);
+  }
+
   exports.DialKnob.prototype = {
 
-    defaults: function(options) {
-      var defaults = {
-        frameBackgroundColor: 'white',
-        frameSize: 200,
-        ringBackground: '#888',
-        innerBackground: 'white',
-        textFontFamily: 'impact',
-        textFontSize: '24px',
-        ringWidth: 50
-      };
-
-      for (key in options) {
-        defaults[key] = options[key];
-      }
-
-      return defaults;
+    // expecting 0...1
+    setValue: function(percentage) {
+      var angle = this.convertPercentageToAngle(percentage);
+      this.updateDial(angle);
     },
 
     initialize: function() {
@@ -68,26 +84,43 @@
       this.dial = this.buildDial();
 
       dragOnMove = function(sx, sy, ax, ay, e) {
-        this._updateDial(ax, ay);
-        this._executeCallback('onDragMove', [this.percentage]);
+        this.updateDial(this.getAngle(ax, ay));
+        this.executeCallback('onDragMove', [this.percentage]);
       };
       dragOnStart = function(x, y, e) {
-        this._updateDial(x, y);
-        this._executeCallback('onDragStart', [this.percentage]);
+        this.centerCoordinates = this.calculateDialCenterCoordinates();
+        this.updateDial(this.getAngle(x, y));
+        this.executeCallback('onDragStart', [this.percentage]);
       };
       dragOnEnd = function(x, y, e) {
-        this._executeCallback('onDragEnd', [this.percentage]);
+        this.executeCallback('onDragEnd', [this.percentage]);
       };
 
-      this._moveKnob(this._convertPercentageToAngle(0));
+      this.moveKnob(this.convertPercentageToAngle(0));
       this.innerCircle.drag(dragOnMove, dragOnStart, dragOnEnd, this, this, this);
       this.outerCircle.drag(dragOnMove, dragOnStart, dragOnEnd, this, this, this);
 
-      this._executeCallback('onReady');
+      this.executeCallback('onReady');
+    },
+
+    getAngle: function(x, y) {
+      return Snap.angle(this.centerCoordinates.x, this.centerCoordinates.y, x, y);
     },
 
     buildCanvas: function() {
-      return Snap(this.elSelector);
+      var el;
+
+      if (this.el.jquery) {
+        el = this.el[0]
+      } else if (this.el instanceof HTMLElement) {
+        el = this.el
+      } else {
+        el = document.querySelector(this.el);
+      }
+
+      var svgHtml = '<svg style="width: ' + this.options.frameSize + 'px; height: ' + this.options.frameSize + 'px;"></svg>';
+      el.innerHTML = svgHtml;
+      return Snap(el.getElementsByTagName('svg')[0]);
     },
 
     buildDial: function() {
@@ -114,7 +147,7 @@
       );
 
       outerCircle.attr({
-        fill: this.c.gradient(this._calculateFillColor(this.options.background)),
+        fill: this.c.gradient(this.calculateFillColor(this.options.background)),
         mask: this.c.polyline(trianglePoints(this.options.frameSize)).attr({ fill: this.options.frameBackgroundColor })
       });
 
@@ -149,11 +182,11 @@
         attributes.y,
         attributes.radius
       );
-      var dropShadow = this.c.filter(Snap.filter.shadow(0, this.options.ringWidth / 10, this.options.ringWidth / 10, '#000', 0.6));
+      var dropShadow = this.generateDropShadow();
       var dialKnob = buildDialKnob.call(this);
 
       innerCircle = this.c.group(innerCircle, dialKnob).attr({
-        fill: this._calculateFillColor(this.options.innerBackground),
+        fill: this.calculateFillColor(this.options.innerBackground),
         filter: dropShadow,
         transform: ['rotate(0', this.options.frameSize / 2, this.options.frameSize / 2].join(' ')
       });
@@ -164,27 +197,41 @@
     buildText: function() {
       return this.c.text(
         this.options.frameSize / 2,
-        this.options.frameSize / 2,
+        this.options.frameSize / 2 + (this.options.textFontSize / 3),
         '0%'
       ).attr({
         fontFamily: this.options.textFontFamily,
         fontSize: this.options.textFontSize,
+        fontWeight: this.options.textFontWeight,
+        fontStyle: this.options.textFontStyle,
         textAnchor: 'middle'
       });
     },
 
-    _updateText: function(percentage) {
+    generateDropShadow: function(options) {
+      var opts = defaults(options || {}, {
+        x: 0,
+        y: this.options.ringWidth / 20,
+        blur: 3,
+        color: '#000',
+        opacity: 0.2
+      });
+
+      return this.c.filter(Snap.filter.shadow( opts.x, opts.y, opts.blur, opts.color, opts.opacity ));
+    },
+
+    updateText: function(percentage) {
       this.text.attr({
         text: [Math.round(percentage * 100),'%'].join('')
       });
     },
 
-    _calculateFillColor: function(background) {
+    calculateFillColor: function(background) {
       background = (background instanceof Array) ? background : [background];
       return 'l(0, 0.5, 1, 0.5)' + background.join('-');
     },
 
-    _convertAngleToPercentage: function(angle) {
+    convertAngleToPercentage: function(angle) {
       var startAngle = 315,
           endAngle = 225,
           value;
@@ -198,7 +245,7 @@
       return value / (endAngle+45);
     },
 
-    _convertPercentageToAngle: function(percentage) {
+    convertPercentageToAngle: function(percentage) {
       var startAngle = 315,
           endAngle = 225;
 
@@ -206,9 +253,9 @@
       return (unadjustedAngle > 360) ? unadjustedAngle - 360 : unadjustedAngle;
     },
 
-    _moveKnob: function(angle) {
+    moveKnob: function(angle) {
       var dropShadowAlignment = calculateDropShadowAngle(angle);
-      var dropShadow = this.c.filter(Snap.filter.shadow(dropShadowAlignment[0], dropShadowAlignment[1], this.options.ringWidth / 10, '#000', 0.6));
+      var dropShadow = this.generateDropShadow({ x: dropShadowAlignment[0], y: dropShadowAlignment[1]})
 
       this.innerCircle.attr({
         transform: ['rotate(', angle, this.options.frameSize / 2, this.options.frameSize / 2, ')'].join(' '),
@@ -216,21 +263,28 @@
       });
     },
 
-    _updateDial: function(x, y) {
-      var angle = Snap.angle(this.options.frameSize / 2, this.options.frameSize / 2, x, y);
-
+    updateDial: function(angle) {
       // if the angle is in the white triangle area, don't do anything
       if (315 >= angle && 225 < angle)
         return
 
-      this._moveKnob(angle);
-      this.percentage = this._convertAngleToPercentage(angle);
-      this._updateText(this.percentage);
+      this.moveKnob(angle);
+      this.percentage = this.convertAngleToPercentage(angle);
+      this.updateText(this.percentage);
     },
 
-    _executeCallback: function(type, args) {
+    calculateDialCenterCoordinates: function() {
+      var boundingBox = this.outerCircle.node.getBoundingClientRect();
+
+      return {
+        x: boundingBox.left + (boundingBox.height / 2),
+        y: boundingBox.top + (boundingBox.height / 2)
+      }
+    },
+
+    executeCallback: function(type, args) {
       if (this.options[type])
-        this.options[type].apply(this, args);
+        this.options[type].apply(null, args);
     }
 
   };
