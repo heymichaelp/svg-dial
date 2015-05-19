@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>My Test SnapSVG shit</title>
+  </head>
+  <body>
+    <svg id="svg-dial" style="width: 500px; height: 500px;"></svg>
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/snap.svg/0.3.0/snap.svg-min.js"></script>
+    <script type="text/javascript" src="svg-dial.js"></script>
+    <script type="text/javascript">
+      // // globals
+      new DialKnob('#svg-dial', {
+        background: ['#f7da40', '#84c535'],
+        frameSize: 400,
+        ringWidth: 35,
+        textFontSize: 70,
+        frameBackgroundColor: 'white',
+        onDragEnd: function(percentage) {
+          alert('The dial is set to', arguments);
+        }
+      });
+    </script>
+
+    <script type="text/javascript">
+      // browserify
+      var DialKnob = require('svg-dial');
+
+      new DialKnob('#svg-dial', {
+        background: ['#f7da40', '#84c535'],
+        frameSize: 400,
+        ringWidth: 35,
+        textFontSize: 70,
+        frameBackgroundColor: 'white',
+        onDragEnd: function(percentage) {
+          alert('The dial is set to', arguments);
+        }
+      });
+    </script>
+  </body>
+</html>

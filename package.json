@@ -1,0 +1,31 @@
+{
+  "name": "svg-dial",
+  "version": "1.0.0",
+  "description": "A customizable, responsive SVG dial UI element",
+  "main": "svg-dial.js",
+  "directories": {
+    "example": "examples"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "uglifyjs --compress --mangle -o svg-dial.min.js -- svg-dial.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/createbang/svg-dial.git"
+  },
+  "dependencies": {
+    "snapsvg": "0.4.x"
+  },
+  "keywords": [
+    "svg",
+    "dial",
+    "knob"
+  ],
+  "author": "Michael Phillips",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/createbang/svg-dial/issues"
+  },
+  "homepage": "https://github.com/createbang/svg-dial"
+}
