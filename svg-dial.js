@@ -53,6 +53,7 @@
   exports.DialKnob = function(el, options) {
     this.el = el || '#svg-dial';
     this.options = defaults(options || {}, {
+      disabled: false,
       frameBackgroundColor: 'white',
       frameSize: 200,
       ringBackground: '#888',
@@ -72,6 +73,10 @@
   }
 
   exports.DialKnob.prototype = {
+
+    config: function(options) {
+      this.options = defaults(options, this.options);
+    },
 
     // expecting 0...1
     setValue: function(percentage) {
@@ -264,6 +269,8 @@
     },
 
     updateDial: function(angle) {
+      if (this.options.disabled) return
+
       // if the angle is in the white triangle area, don't do anything
       if (315 >= angle && 225 < angle)
         return
