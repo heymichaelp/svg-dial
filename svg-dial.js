@@ -1,4 +1,4 @@
-//     svg-dial 1.0.0
+//     svg-dial
 //     (c) 2015 Michael Phillips
 //     https://github.com/createbang/svg-dial
 
@@ -21,31 +21,39 @@
 }(function(root, exports, Snap) {
 
   var lerp = function(angle, a, b) {
-    var t = (angle % 90) / 90
+    var t = (angle % 90) / 90;
     return a * (1 - t) + b * t;
   };
 
   var calculateDropShadowAngle = function(angle) {
-    if (angle >= 0 && angle < 90) {
+    var topLeftQuadrant = angle >= 0 && angle < 90;
+    var topRightQuadrant = angle >= 90 && angle < 180;
+    var bottomRightQuadrant = angle >= 180 && angle < 270;
+    var bottomLeftQuadrant = angle >= 270 && angle <= 360;
+
+    if (topLeftQuadrant) {
       return [lerp(angle, 0, 8), lerp(angle, 8, 0)];
-    } else if (angle >= 90 && angle < 180) {
+    } else if (topRightQuadrant) {
       return [lerp(angle, 8, 0), lerp(angle, 0, -8)];
-    } else if (angle >= 180 && angle < 270) {
+    } else if (bottomRightQuadrant) {
       return [lerp(angle, 0, -8), lerp(angle, -8, 0)];
-    } else {
+    } else if (bottomLeftQuadrant) {
       return [lerp(angle, -8, 0), lerp(angle, 0, 8)];
     }
   };
 
   var defaults = function(base, defaults) {
     var result = {};
+    var transferProps = function(obj) {
+      for (key in obj) {
+        if (obj.hasOwnProperty(key)) {
+          result[key] = obj[key];
+        }
+      }
+    }
 
-    for (key in defaults) {
-      result[key] = defaults[key];
-    }
-    for (key in base) {
-      result[key] = base[key];
-    }
+    transferProps(defaults);
+    transferProps(base);
 
     return result;
   };
@@ -58,10 +66,10 @@
       frameSize: 200,
       ringBackground: '#888',
       innerBackground: 'white',
-      textFontFamily: 'impact',
-      textFontSize: '24px',
-      textFontStyle: 'none',
-      textFontWeight: 'none',
+      fontFamily: 'impact',
+      fontSize: '24px',
+      fontStyle: 'none',
+      fontWeight: 'none',
       ringWidth: 50
     });
 
@@ -88,22 +96,22 @@
       this.c = this.buildCanvas();
       this.dial = this.buildDial();
 
-      dragOnMove = function(sx, sy, ax, ay, e) {
+      var onChange = function(sx, sy, ax, ay, e) {
         this.updateDial(this.getAngle(ax, ay));
-        this.executeCallback('onDragMove', [this.percentage]);
+        this.executeCallback('onChange', [this.percentage]);
       };
-      dragOnStart = function(x, y, e) {
+      var onStart = function(x, y, e) {
         this.centerCoordinates = this.calculateDialCenterCoordinates();
         this.updateDial(this.getAngle(x, y));
-        this.executeCallback('onDragStart', [this.percentage]);
+        this.executeCallback('onStart', [this.percentage]);
       };
-      dragOnEnd = function(x, y, e) {
-        this.executeCallback('onDragEnd', [this.percentage]);
+      var onEnd = function(x, y, e) {
+        this.executeCallback('onEnd', [this.percentage]);
       };
 
       this.moveKnob(this.convertPercentageToAngle(0));
-      this.innerCircle.drag(dragOnMove, dragOnStart, dragOnEnd, this, this, this);
-      this.outerCircle.drag(dragOnMove, dragOnStart, dragOnEnd, this, this, this);
+      this.innerCircle.drag(onChange, onStart, onEnd, this, this, this);
+      this.outerCircle.drag(onChange, onStart, onEnd, this, this, this);
 
       this.executeCallback('onReady');
     },
@@ -114,16 +122,16 @@
 
     buildCanvas: function() {
       var el;
+      var svgHtml = '<svg style="width: ' + this.options.frameSize + 'px; height: ' + this.options.frameSize + 'px;"></svg>';
 
       if (this.el.jquery) {
-        el = this.el[0]
+        el = this.el[0];
       } else if (this.el instanceof HTMLElement) {
-        el = this.el
+        el = this.el;
       } else {
         el = document.querySelector(this.el);
       }
 
-      var svgHtml = '<svg style="width: ' + this.options.frameSize + 'px; height: ' + this.options.frameSize + 'px;"></svg>';
       el.innerHTML = svgHtml;
       return Snap(el.getElementsByTagName('svg')[0]);
     },
@@ -141,8 +149,9 @@
         radius: this.options.frameSize / 2
       }
 
+      // describe triangle that extends from bottom left to center to bottom right
       var trianglePoints = function(frameSize) {
-        return [0,0,0,frameSize,frameSize/2,frameSize/2,frameSize,frameSize,frameSize,0]
+        return [0,0,0,frameSize,frameSize/2,frameSize/2,frameSize,frameSize,frameSize,0];
       };
 
       var outerCircle = this.c.circle(
@@ -190,25 +199,25 @@
       var dropShadow = this.generateDropShadow();
       var dialKnob = buildDialKnob.call(this);
 
-      innerCircle = this.c.group(innerCircle, dialKnob).attr({
+      var innerGrouping = this.c.group(innerCircle, dialKnob).attr({
         fill: this.calculateFillColor(this.options.innerBackground),
         filter: dropShadow,
         transform: ['rotate(0', this.options.frameSize / 2, this.options.frameSize / 2].join(' ')
       });
 
-      return innerCircle;
+      return innerGrouping;
     },
 
     buildText: function() {
       return this.c.text(
         this.options.frameSize / 2,
-        this.options.frameSize / 2 + (this.options.textFontSize / 3),
+        this.options.frameSize / 2 + (this.options.fontSize / 3),
         '0%'
       ).attr({
-        fontFamily: this.options.textFontFamily,
-        fontSize: this.options.textFontSize,
-        fontWeight: this.options.textFontWeight,
-        fontStyle: this.options.textFontStyle,
+        fontFamily: this.options.fontFamily,
+        fontSize: this.options.fontSize,
+        fontWeight: this.options.fontWeight,
+        fontStyle: this.options.fontStyle,
         textAnchor: 'middle'
       });
     },
@@ -254,13 +263,13 @@
       var startAngle = 315,
           endAngle = 225;
 
-      unadjustedAngle = (percentage * (endAngle+45)) + startAngle;
+      var unadjustedAngle = (percentage * (endAngle+45)) + startAngle;
       return (unadjustedAngle > 360) ? unadjustedAngle - 360 : unadjustedAngle;
     },
 
     moveKnob: function(angle) {
       var dropShadowAlignment = calculateDropShadowAngle(angle);
-      var dropShadow = this.generateDropShadow({ x: dropShadowAlignment[0], y: dropShadowAlignment[1]})
+      var dropShadow = this.generateDropShadow({ x: dropShadowAlignment[0], y: dropShadowAlignment[1]});
 
       this.innerCircle.attr({
         transform: ['rotate(', angle, this.options.frameSize / 2, this.options.frameSize / 2, ')'].join(' '),
@@ -269,11 +278,14 @@
     },
 
     updateDial: function(angle) {
-      if (this.options.disabled) return
+      if (this.options.disabled) {
+        return;
+      }
 
       // if the angle is in the white triangle area, don't do anything
-      if (315 >= angle && 225 < angle)
-        return
+      if (315 >= angle && 225 < angle) {
+        return;
+      }
 
       this.moveKnob(angle);
       this.percentage = this.convertAngleToPercentage(angle);
@@ -290,8 +302,9 @@
     },
 
     executeCallback: function(type, args) {
-      if (this.options[type])
+      if (this.options[type]) {
         this.options[type].apply(null, args);
+      }
     }
 
   };

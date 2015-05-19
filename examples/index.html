@@ -14,10 +14,10 @@
         background: ['#f7da40', '#84c535'],
         frameSize: 400,
         ringWidth: 35,
-        textFontSize: 70,
+        fontSize: 70,
         frameBackgroundColor: 'white',
-        onDragEnd: function(percentage) {
-          alert('The dial is set to', arguments);
+        onChange: function(percentage) {
+          console.log('the dial is set to ' + percentage);
         }
       });
     </script>
@@ -30,10 +30,10 @@
         background: ['#f7da40', '#84c535'],
         frameSize: 400,
         ringWidth: 35,
-        textFontSize: 70,
+        fontSize: 70,
         frameBackgroundColor: 'white',
-        onDragEnd: function(percentage) {
-          alert('The dial is set to', arguments);
+        onChange: function(percentage) {
+          console.log('the dial is set to ' + percentage);
         }
       });
     </script>
