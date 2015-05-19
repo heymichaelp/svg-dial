@@ -126,37 +126,37 @@ Purpose: Uses this font weight for the inner text that displays the percentage
 
 #### Methods
 
-#### `onChange`
+##### `onChange`
 Type: `Function`  
 Event: Any change in the dial setting during a drag.  
 Arguments:  
 * `percentage`: percentage between `0` and `1` that the dial is currently set at.  
 
-#### `onStart`
+##### `onStart`
 Type: `Function`  
 Event: The mouse down event on the dial  
 Arguments:  
 * `percentage`: percentage between `0` and `1` that the dial is currently set at.  
 
-#### `onChange`
+##### `onChange`
 Type: `Function`  
 Event: The mouse up event on the dial  
 Arguments:  
 * `percentage`: percentage between `0` and `1` that the dial is currently set at.  
 
-#### `onReady`
+##### `onReady`
 Type: `Function`  
 Event: The dial is loaded into the DOM  
 Arguments: none  
 
 ### Public API
 
-#### `config()`
+##### `config()`
 Type: `Object`  
 Description: Same structure as the options object.  
 Purpose: Overrides initial settings during runtime.  
 
-#### `setValue()`
+##### `setValue()`
 Type: `Integer`  
 Description: Number between `0` and `1`.  
 Purpose: Sets the value and position of the dial.  
