@@ -3,6 +3,8 @@ svg-dial
 
 A customizable, responsive SVG dial UI element.
 
+![https://pbs.twimg.com/media/CFaBu2CUIAAQqJP.png](https://pbs.twimg.com/media/CFaBu2CUIAAQqJP.png)
+
 ## Introduction
 
 After becoming frustrated with the lack of flexibility and support of [jQuery-knob](http://anthonyterrien.com/knob/), I decided to create my own SVG dial that allowed me to customize the look and feel of the dial.
