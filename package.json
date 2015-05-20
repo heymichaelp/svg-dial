@@ -1,6 +1,6 @@
 {
   "name": "svg-dial",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A customizable, responsive SVG dial UI element",
   "main": "svg-dial.js",
   "directories": {

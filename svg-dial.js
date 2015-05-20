@@ -9,13 +9,13 @@
 
   if (typeof define === 'function' && define.amd) {
     define(['snap', 'exports'], function(Snap, exports) {
-      root.DialKnob = factory(root, exports, Snap);
+      root.SVGDial = factory(root, exports, Snap);
     });
   } else if (typeof exports !== 'undefined') {
     var Snap = require('snapsvg');
     factory(root, exports, Snap);
   } else {
-    root.DialKnob = factory(root, {}, root.Snap);
+    root.SVGDial = factory(root, {}, root.Snap);
   }
 
 }(function(root, exports, Snap) {
@@ -58,29 +58,29 @@
     return result;
   };
 
-  exports.DialKnob = function(el, options) {
-    this.el = el || '#svg-dial';
+  exports.SVGDial = function(el, options) {
+    this.el = el;
     this.options = defaults(options || {}, {
       disabled: false,
-      frameBackgroundColor: 'white',
       frameSize: 200,
-      ringBackground: '#888',
-      innerBackground: 'white',
+      ringWidth: 50,
+      frameBackgroundColor: 'white',
+      ringBackgroundColor: '#888',
+      innerBackgroundColor: 'white',
       fontFamily: 'impact',
-      fontSize: '24px',
+      fontSize: 24,
       fontStyle: 'none',
-      fontWeight: 'none',
-      ringWidth: 50
+      fontWeight: 'none'
     });
 
     this.initialize();
   };
 
-  exports.DialKnob.create = function(el, options) {
-    return new exports.DialKnob(el, options);
+  exports.SVGDial.create = function(el, options) {
+    return new exports.SVGDial(el, options);
   }
 
-  exports.DialKnob.prototype = {
+  exports.SVGDial.prototype = {
 
     config: function(options) {
       this.options = defaults(options, this.options);
@@ -161,7 +161,7 @@
       );
 
       outerCircle.attr({
-        fill: this.c.gradient(this.calculateFillColor(this.options.background)),
+        fill: this.c.gradient(this.calculateFillColor(this.options.ringBackgroundColor)),
         mask: this.c.polyline(trianglePoints(this.options.frameSize)).attr({ fill: this.options.frameBackgroundColor })
       });
 
@@ -200,7 +200,7 @@
       var dialKnob = buildDialKnob.call(this);
 
       var innerGrouping = this.c.group(innerCircle, dialKnob).attr({
-        fill: this.calculateFillColor(this.options.innerBackground),
+        fill: this.calculateFillColor(this.options.innerBackgroundColor),
         filter: dropShadow,
         transform: ['rotate(0', this.options.frameSize / 2, this.options.frameSize / 2].join(' ')
       });
@@ -309,6 +309,6 @@
 
   };
 
-  return exports.DialKnob;
+  return exports.SVGDial;
 
 }));
