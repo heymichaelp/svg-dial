@@ -1,7 +1,7 @@
 {
   "name": "svg-dial",
   "main": "svg-dial.js",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "homepage": "https://github.com/createbang/svg-dial",
   "authors": [
     "Michael Phillips <mlp.brooklyn@gmail.com>"
