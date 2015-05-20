@@ -11,6 +11,18 @@ Though this element is designed to be highly customizable, it doesn't deviate fr
 
 This may fit your needs and asthetics, it may not.
 
+## Installation
+
+This package is available for installation via npm and bower
+
+```sh
+$ npm install svg-dial
+```
+
+```sh
+$ bower install svg-dial
+```
+
 ## Usage
 
 The only dependency this library has is on [Snap.svg](http://snapsvg.io/).  It assumes this library is available to the module, and is configured to look for it in the AMD, CommonJS (Browserify) and global environments.
