@@ -2,13 +2,16 @@
   "name": "svg-dial",
   "version": "1.0.5",
   "description": "A customizable, responsive SVG dial UI element",
-  "main": "svg-dial.js",
+  "main": "lib/svg-dial.js",
   "directories": {
     "example": "examples"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "uglifyjs --compress --mangle -o svg-dial.min.js -- svg-dial.js"
+    "build:dev": "browserify lib/svg-dial.js > dist/svg-dial.js --standalone SVGDial",
+    "build:min": "uglifyjs -o dist/svg-dial.min.js -- dist/svg-dial.js",
+    "build": "npm run build:dev && npm run build:min",
+    "watch": "watchify lib/svg-dial.js -o dist/svg-dial.js --standalone SVGDial"
   },
   "repository": {
     "type": "git",
@@ -16,6 +19,11 @@
   },
   "dependencies": {
     "snapsvg": "0.4.x"
+  },
+  "devDependencies": {
+    "browserify": "10.2.1",
+    "uglify-js": "2.4.23",
+    "watchify": "^3.2.1"
   },
   "keywords": [
     "svg",
