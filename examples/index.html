@@ -7,10 +7,10 @@
     <div id="svg-dial"></svg>
 
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/snap.svg/0.3.0/snap.svg-min.js"></script>
-    <script type="text/javascript" src="svg-dial.js"></script>
+    <script type="text/javascript" src="../svg-dial.js"></script>
     <script type="text/javascript">
       // // globals
-      new DialKnob('#svg-dial', {
+      new SVGDial('#svg-dial', {
         ringBackgroundColor: ['#f7da40', '#84c535'],
         frameBackgroundColor: 'white',
         frameSize: 400,
@@ -24,18 +24,18 @@
 
     <script type="text/javascript">
       // browserify
-      var DialKnob = require('svg-dial');
+      // var SVGDial = require('svg-dial');
 
-      new DialKnob('#svg-dial', {
-        ringBackgroundColor: ['#f7da40', '#84c535'],
-        frameBackgroundColor: 'white',
-        frameSize: 400,
-        ringWidth: 35,
-        fontSize: 70,
-        onChange: function(percentage) {
-          console.log('the dial is set to ' + percentage);
-        }
-      });
+      // new SVGDial('#svg-dial', {
+      //   ringBackgroundColor: ['#f7da40', '#84c535'],
+      //   frameBackgroundColor: 'white',
+      //   frameSize: 400,
+      //   ringWidth: 35,
+      //   fontSize: 70,
+      //   onChange: function(percentage) {
+      //     console.log('the dial is set to ' + percentage);
+      //   }
+      // });
     </script>
   </body>
 </html>

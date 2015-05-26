@@ -250,7 +250,7 @@
           endAngle = 225,
           value;
 
-      if (startAngle < angle && 360 >= angle) {
+      if (startAngle <= angle && 360 >= angle) {
         value = 45 - (360 - angle);
       } else {
         value = angle + 45
@@ -283,8 +283,10 @@
       }
 
       // if the angle is in the white triangle area, don't do anything
-      if (315 >= angle && 225 < angle) {
-        return;
+      if (angle <= 315 && angle > 270) {
+        angle = 315;
+      } else if (angle <= 270 && angle > 225) {
+        angle = 225;
       }
 
       this.moveKnob(angle);
