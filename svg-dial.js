@@ -191,18 +191,30 @@
         );
       };
 
-      var innerCircle = this.c.circle(
-        attributes.x,
-        attributes.y,
-        attributes.radius
-      );
+      var buildKnobCircle = function() {
+        return this.c.circle(
+          attributes.x,
+          attributes.y,
+          attributes.radius
+        )
+      };
+
       var dropShadow = this.generateDropShadow();
       var dialKnob = buildDialKnob.call(this);
 
-      var innerGrouping = this.c.group(innerCircle, dialKnob).attr({
+      var baseCircle = buildKnobCircle.call(this).attr({
+        fill: this.calculateFillColor(this.options.innerBackgroundColor),
+        filter: dropShadow
+      });
+
+      var innerGrouping = this.c.group(dialKnob).attr({
         fill: this.calculateFillColor(this.options.innerBackgroundColor),
         filter: dropShadow,
         transform: ['rotate(0', this.options.frameSize / 2, this.options.frameSize / 2].join(' ')
+      });
+
+      var capCircle = buildKnobCircle.call(this).attr({
+        fill: this.calculateFillColor(this.options.innerBackgroundColor)
       });
 
       return innerGrouping;
