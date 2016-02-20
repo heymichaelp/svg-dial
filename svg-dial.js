@@ -62,6 +62,7 @@
   exports.SVGDial = function(el, options) {
     this.el = el;
     this.options = defaults(options || {}, {
+      renderText: true,
       manipulatable: true,
       disabled: false,
       frameSize: 200,
@@ -226,17 +227,20 @@
     },
 
     buildText: function() {
-      return this.c.text(
-        this.options.frameSize / 2,
-        this.options.frameSize / 2 + (this.options.fontSize / 3),
-        '0%'
-      ).attr({
-        fontFamily: this.options.fontFamily,
-        fontSize: this.options.fontSize,
-        fontWeight: this.options.fontWeight,
-        fontStyle: this.options.fontStyle,
-        textAnchor: 'middle'
-      });
+      if(this.options.rendertext) {
+        return this.c.text(
+          this.options.frameSize / 2,
+          this.options.frameSize / 2 + (this.options.fontSize / 3),
+          '0%'
+        ).attr({
+          fontFamily: this.options.fontFamily,
+          fontSize: this.options.fontSize,
+          fontWeight: this.options.fontWeight,
+          fontStyle: this.options.fontStyle,
+          textAnchor: 'middle'
+        });
+      }
+      return ''
     },
 
     generateDropShadow: function(options) {
@@ -252,9 +256,11 @@
     },
 
     updateText: function(percentage) {
-      this.text.attr({
-        text: [Math.round(percentage * 100),'%'].join('')
-      });
+      if(this.options.renderText) {
+        this.text.attr({
+          text: [Math.round(percentage * 100),'%'].join('')
+        });
+      }
     },
 
     calculateFillColor: function(background) {
