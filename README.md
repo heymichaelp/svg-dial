@@ -91,6 +91,11 @@ Default: `false`
 Type: `Boolean`  
 Purpose: If set to true, disables the manipulation of the dial.  
 
+##### `renderText`  
+Default: `true`  
+Type: `Boolean`  
+Purpose: If set to false, does not render text in center of dial.  
+
 ##### `manipulatable`  
 Default: `true`  
 Type: `Boolean`  
