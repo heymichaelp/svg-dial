@@ -1,3 +1,4 @@
+/*eslint-disable */
 //     svg-dial
 //     (c) 2015 Michael Phillips
 //     https://github.com/createbang/svg-dial
@@ -61,6 +62,7 @@
   exports.SVGDial = function(el, options) {
     this.el = el;
     this.options = defaults(options || {}, {
+      manipulatable: true,
       disabled: false,
       frameSize: 200,
       ringWidth: 50,
@@ -90,6 +92,7 @@
     setValue: function(percentage) {
       var angle = this.convertPercentageToAngle(percentage);
       this.updateDial(angle);
+      this.executeCallback('onChange', [this.percentage]);
     },
 
     initialize: function() {
@@ -110,8 +113,10 @@
       };
 
       this.moveKnob(this.convertPercentageToAngle(0));
-      this.innerCircle.drag(onChange, onStart, onEnd, this, this, this);
-      this.outerCircle.drag(onChange, onStart, onEnd, this, this, this);
+      if(this.options.manipulatable){
+        this.innerCircle.drag(onChange, onStart, onEnd, this, this, this);
+        this.outerCircle.drag(onChange, onStart, onEnd, this, this, this);
+      }
 
       this.executeCallback('onReady');
     },
